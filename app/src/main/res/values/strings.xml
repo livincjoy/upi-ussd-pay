@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">UPI USSD Pay</string>
+    <string name="accessibility_service_description">Automates *99# USSD options for offline UPI payments and halts safely at UPI PIN prompt.</string>
+</resources>
