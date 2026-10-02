@@ -19,11 +19,18 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
 
-    - name: Grant Execute Permission or Generate Wrapper
+    - name: Auto-Detect Project Directory & Build APK
       run: |
+        # If project files were uploaded inside a 'UpiUssd' folder, move into it
+        if [ -d "UpiUssd" ]; then
+          echo "Found UpiUssd subfolder, moving inside..."
+          cd UpiUssd
+        fi
+
+        # Make gradlew executable or create it
         if [ -f "gradlew" ]; then
           chmod +x gradlew
         else
@@ -31,11 +38,12 @@ jobs:
           chmod +x gradlew
         fi
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --no-daemon --stacktrace
+        # Build Debug APK
+        ./gradlew assembleDebug --no-daemon --stacktrace
 
     - name: Upload Debug APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: UpiUssd-app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: '**/build/outputs/apk/**/*.apk'
+        if-no-files-found: error
